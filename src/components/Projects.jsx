@@ -12,19 +12,19 @@ const projects = [
       'Designed intuitive UI for seamless user experience.',
       'Optimized application performance across devices.'
     ],
-    link: '#',
+    link: 'https://github.com/ADITYAKIRAN890/Inventory-tracker',
     img: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1200&auto=format&fit=crop'
   },
   {
     id: 2,
-    title: 'Data/ML Project',
-    desc: 'Built a machine learning model for prediction and data analysis.',
+    title: 'Advanced Brain Tumor Detection System',
+    desc: 'Built a machine learning model for prediction and data analysis of brain tumors.',
     highlights: [
       'Used data preprocessing and feature engineering',
       'Applied ML algorithms (e.g., Random Forest)',
       'Evaluated model performance'
     ],
-    link: '#',
+    link: 'https://github.com/ADITYAKIRAN890/Advanced-Brain-Tumor-Detection-System',
     img: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=1200&auto=format&fit=crop'
   },
   {
@@ -36,7 +36,7 @@ const projects = [
       'Created interactive dashboards to visualize insights and support decision-making.',
       'Generated actionable recommendations using data visualization techniques.'
     ],
-    link: '#',
+    link: 'https://tableauflaskproject.vercel.app/',
     img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop'
   }
 ];
