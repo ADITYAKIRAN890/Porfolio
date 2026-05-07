@@ -19,7 +19,7 @@ const Hero = () => {
         <a href="https://mail.google.com/mail/u/0/?fs=1&to=adityashukla600700@gmail.com&tf=cm" target="_blank" rel="noreferrer" className="nav-cta" style={{ background: 'var(--text-main)' }}>
           Mail Me
         </a>
-        <a href="https://drive.google.com/file/d/1_e0zHZ7kfe9hPlB_bnp7Qhvyojkw9Fze/view?usp=sharing" target="_blank" rel="noreferrer" className="nav-cta" style={{ background: 'transparent', color: '#fff', border: '1px solid var(--border-active)' }}>
+        <a href="https://drive.google.com/file/d/100jWPT_UN8v-oi9IZtfIkhHLxJ2-v6eY/view?usp=sharing" target="_blank" rel="noreferrer" className="nav-cta" style={{ background: 'transparent', color: '#fff', border: '1px solid var(--border-active)' }}>
           Resume
         </a>
       </div>
