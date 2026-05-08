@@ -1,46 +1,77 @@
 import React, { useState, useRef } from 'react';
 import { FaGithub, FaInstagram, FaLinkedin, FaCheckCircle } from 'react-icons/fa';
 import emailjs from '@emailjs/browser';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const ContactPage = () => {
   const [status, setStatus] = useState('idle');
   const form = useRef();
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('submitting');
 
-    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-    const autoReplyTemplateId = import.meta.env.VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID;
-    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-
-    if (!serviceId || !templateId || !publicKey || templateId.includes('your_template_id') || publicKey.includes('your_public_key')) {
-      alert('EmailJS credentials are not fully configured in .env file.');
+    if (!executeRecaptcha) {
+      alert('reCAPTCHA has not loaded yet. Please try again in a moment.');
       setStatus('idle');
       return;
     }
 
-    // Send the main contact email
-    emailjs.sendForm(serviceId, templateId, form.current, publicKey)
-      .then((result) => {
-        console.log('Main email sent:', result.text);
-        
-        // If auto-reply template is provided, send the auto-reply
-        if (autoReplyTemplateId) {
-          emailjs.sendForm(serviceId, autoReplyTemplateId, form.current, publicKey)
-            .then(res => console.log('Auto-reply sent:', res.text))
-            .catch(err => console.error('Failed to send auto-reply:', err.text));
-        }
+    try {
+      // 1. Generate reCAPTCHA token
+      const token = await executeRecaptcha('contact_form_submit');
 
-        setStatus('success');
-        form.current.reset();
-        setTimeout(() => setStatus('idle'), 3000);
-      }, (error) => {
-        console.log(error.text);
-        alert('Failed to send message. Please try again later.');
-        setStatus('idle');
+      // 2. Verify token on our serverless backend
+      const verifyRes = await fetch('/api/verify-recaptcha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
       });
+      
+      const verifyData = await verifyRes.json();
+
+      if (!verifyData.success) {
+        alert(verifyData.message || 'Verification failed. Please try again.');
+        setStatus('idle');
+        return;
+      }
+
+      // 3. Send Emails via EmailJS if human verification passed
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+      const autoReplyTemplateId = import.meta.env.VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID;
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+      if (!serviceId || !templateId || !publicKey || templateId.includes('your_template_id') || publicKey.includes('your_public_key')) {
+        alert('EmailJS credentials are not fully configured in .env file.');
+        setStatus('idle');
+        return;
+      }
+
+      // Send the main contact email
+      await emailjs.sendForm(serviceId, templateId, form.current, publicKey);
+      console.log('Main email sent');
+      
+      // If auto-reply template is provided, send the auto-reply
+      if (autoReplyTemplateId) {
+        try {
+          await emailjs.sendForm(serviceId, autoReplyTemplateId, form.current, publicKey);
+          console.log('Auto-reply sent');
+        } catch (err) {
+          console.error('Failed to send auto-reply:', err.text || err);
+        }
+      }
+
+      setStatus('success');
+      form.current.reset();
+      setTimeout(() => setStatus('idle'), 3000);
+
+    } catch (error) {
+      console.error('Form submission error:', error);
+      alert('Failed to send message. Please try again later.');
+      setStatus('idle');
+    }
   };
 
   return (
