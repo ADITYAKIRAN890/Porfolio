@@ -96,8 +96,9 @@ const ContactPage = () => {
         </div>
 
         <form ref={form} className="contact-form" onSubmit={handleSubmit} style={{ width: '100%', maxWidth: '500px' }}>
-          <input type="text" name="user_name" placeholder="What's your name?" className="input-field" required />
-          <input type="email" name="user_email" placeholder="Your email address?" className="input-field" required />
+          <input type="hidden" name="subject" value="New Message from Portfolio" />
+          <input type="text" name="from_name" placeholder="What's your name?" className="input-field" required />
+          <input type="email" name="from_email" placeholder="Your email address?" className="input-field" required />
           <textarea name="message" placeholder="Tell me about your project..." className="input-field" style={{ minHeight: '100px', paddingTop: '15px' }} required />
           <button type="submit" className="submit-btn" disabled={status !== 'idle'}>
             {status === 'idle' && 'Send Message'}
